@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin-Native DeFi Lending | Clarity 4</title>
+    <meta name="description" content="Sophisticated lending protocol built with Clarity 4 showcasing contract verification, asset restrictions, and passkey authentication">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Background gradient -->
+    <div class="bg-gradient"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">₿</div>
+                    <div class="logo-text">
+                        <h1>BTC Lending</h1>
+                        <span class="clarity-badge">Clarity 4</span>
+                    </div>
+                </div>
+                
+                <nav class="nav">
+                    <a href="#lend" class="nav-link active">Lend</a>
+                    <a href="#borrow" class="nav-link">Borrow</a>
+                    <a href="#governance" class="nav-link">Governance</a>
+                    <a href="#features" class="nav-link">Features</a>
+                </nav>
+                
+                <div class="wallet-section">
+                    <button id="connectWallet" class="btn btn-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M3 9V6a2 2 0 012-2h14a2 2 0 012 2v3M16 14h.01" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Connect Wallet
+                    </button>
+                    <button id="passkeyAuth" class="btn btn-secondary" style="display: none;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-12V7a4 4 0 00-8 0v4h8z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Passkey Auth
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2 class="hero-title">
+                    Bitcoin-Native DeFi Lending
+                    <span class="gradient-text">Powered by Clarity 4</span>
+                </h2>
+                <p class="hero-subtitle">
+                    Borrow against Bitcoin collateral with time-based interest, verified liquidators, and hardware wallet security
+                </p>
+                
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value" id="totalDeposits">$0.00</div>
+                        <div class="stat-label">Total Deposits</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-value" id="totalBorrows">$0.00</div>
+                        <div class="stat-label">Total Borrows</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-value">5.00%</div>
+                        <div class="stat-label">APY</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔒</div>
+                        <div class="stat-value">150%</div>
+                        <div class="stat-label">Min Collateral</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <div class="content-grid">
+                <!-- Lending Panel -->
+                <div class="panel" id="lendPanel">
+                    <div class="panel-header">
+                        <h3>Deposit & Earn</h3>
+                        <div class="panel-badge">Live</div>
+                    </div>
+                    
+                    <div class="panel-body">
+                        <div class="balance-display">
+                            <span>Your Deposits</span>
+                            <span class="balance" id="userDeposits">0.00 STX</span>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Amount to Deposit</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="depositAmount" placeholder="0.00" min="0" step="0.01">
+                                <span class="input-suffix">STX</span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span>Interest Rate</span>
+                                <strong>5.00% APY</strong>
+                            </div>
+                            <div class="info-item">
+                                <span>Est. Annual Earnings</span>
+                                <strong id="estimatedEarnings">0.00 STX</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="button-group">
+                            <button id="depositBtn" class="btn btn-primary btn-lg">Deposit STX</button>
+                            <button id="withdrawBtn" class="btn btn-outline btn-lg">Withdraw</button>
+                        </div>
+                        
+                        <div class="clarity4-feature">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Interest calculated with <code>stacks-block-time</code></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Borrowing Panel -->
+                <div class="panel" id="borrowPanel">
+                    <div class="panel-header">
+                        <h3>Borrow Against Collateral</h3>
+                        <div class="health-indicator" id="healthIndicator">
+                            <div class="health-dot"></div>
+                            <span>Healthy</span>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-body">
+                        <div class="balance-display">
+                            <span>Your Loan</span>
+                            <span class="balance" id="userLoan">0.00 STX</span>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Collateral Amount</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="collateralAmount" placeholder="0.00" min="0" step="0.01">
+                                <span class="input-suffix">STX</span>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Borrow Amount</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="borrowAmount" placeholder="0.00" min="0" step="0.01">
+                                <span class="input-suffix">STX</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Health Factor Display -->
+                        <div class="health-factor-display">
+                            <div class="health-factor-header">
+                                <span>Health Factor</span>
+                                <strong id="healthFactor">∞</strong>
+                            </div>
+                            <div class="health-progress">
+                                <div class="health-progress-bar" id="healthProgressBar" style="width: 100%"></div>
+                            </div>
+                            <div class="health-labels">
+                                <span class="danger-label">Liquidation (120%)</span>
+                                <span class="safe-label">Safe (150%+)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span>Accrued Interest</span>
+                                <strong id="accruedInterest">0.00 STX</strong>
+                            </div>
+                            <div class="info-item">
+                                <span>Max Borrow</span>
+                                <strong id="maxBorrow">0.00 STX</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="button-group">
+                            <button id="addCollateralBtn" class="btn btn-primary btn-lg">Add Collateral</button>
+                            <button id="borrowBtn" class="btn btn-secondary btn-lg">Borrow</button>
+                            <button id="repayBtn" class="btn btn-outline btn-lg">Repay</button>
+                        </div>
+                        
+                        <div class="clarity4-feature">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Protected by <code>restrict-assets?</code></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clarity 4 Features Showcase -->
+            <section class="features-section" id="features">
+                <h3 class="section-title">Clarity 4 Features in Action</h3>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔐</div>
+                        <h4>contract-hash?</h4>
+                        <p>Verify liquidator contracts before execution. Only audited code can interact with your funds.</p>
+                        <div class="feature-code">
+                            <code>(contract-hash? liquidator)</code>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h4>restrict-assets?</h4>
+                        <p>Automatic post-conditions protect pool funds when calling external contracts.</p>
+                        <div class="feature-code">
+                            <code>(restrict-assets? contract limits)</code>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">⏰</div>
+                        <h4>stacks-block-time</h4>
+                        <p>Precise time-based interest accrual and governance timelocks.</p>
+                        <div class="feature-code">
+                            <code>stacks-block-time</code>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">📝</div>
+                        <h4>to-ascii?</h4>
+                        <p>Human-readable loan status and transaction messages on-chain.</p>
+                        <div class="feature-code">
+                            <code>(to-ascii? value)</code>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🔑</div>
+                        <h4>secp256r1-verify</h4>
+                        <p>Hardware wallet and passkey authentication for secure transactions.</p>
+                        <div class="feature-code">
+                            <code>(secp256r1-verify sig key)</code>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h4>SIP-034</h4>
+                        <p>Dimension-specific tenure extensions for high-throughput DeFi operations.</p>
+                        <div class="feature-code">
+                            <code>Tenure Extensions</code>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Bitcoin-Native DeFi</h4>
+                    <p>Powered by Clarity 4 on Stacks</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <a href="https://docs.stacks.co/whats-new/clarity-4-is-now-live">Clarity 4 Docs</a>
+                    <a href="#">GitHub</a>
+                    <a href="#">Whitepaper</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Security</h4>
+                    <p>✓ Contract Verification</p>
+                    <p>✓ Asset Restrictions</p>
+                    <p>✓ Passkey Support</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/contract-interactions.js"></script>
+</body>
+</html>
